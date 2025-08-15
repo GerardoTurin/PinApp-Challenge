@@ -40,7 +40,9 @@ Maven 3.9+
 
 Docker
 
-Cuenta SMTP (ej. Mailtrap) para notificaciones de email en eventos de cliente creado
+Cuenta SMTP (Mailtrap) para notificaciones de email en eventos de cliente creado.
+
+En application-local.properties cambiar las variables de Mailtrap por las propias.
 
 
 
