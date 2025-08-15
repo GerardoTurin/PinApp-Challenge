@@ -44,7 +44,14 @@ Cuenta SMTP (ej. Mailtrap) para notificaciones de email en eventos de cliente cr
 
 
 
-## Contenedores Docker
+## Pasos para Correr el proyecto
+
+Clonar repositorio:
+
+git clone https://github.com/GerardoTurin/PinApp-Challenge
+
+
+## Crea Contenedores Docker
 
 Posicionarse en dentro de la carpeta "db" que está en la raiz del proyecto.
 
@@ -59,7 +66,7 @@ En la raiz del proyecto:
 
 Ejecutar: mvn spring-boot:run
 
-### Limpiar y Correr:
+### Opcional: Limpiar y Correr:
 
 mvn clean install
 
@@ -171,4 +178,4 @@ Prometheus (scrape): http://localhost:8080/icube04/actuator/prometheus
 Prometheus (scrape) Deploy: http://54.221.10.9:8080/icube04/actuator/prometheus
 
 ## Deploy
-### AWS URL: http://54.221.10.9:8080/icube04
+### AWS URL Base: http://54.221.10.9:8080/icube04
