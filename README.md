@@ -181,3 +181,16 @@ Prometheus (scrape) Deploy: http://54.221.10.9:8080/icube04/actuator/prometheus
 
 ## Deploy
 ### AWS URL Base: http://54.221.10.9:8080/icube04
+
+
+## Conectar DB Prod
+
+Host: 54.221.10.9
+
+Port: 5432
+
+User: postgres
+
+Password: 123456
+
+Database: pinApp
