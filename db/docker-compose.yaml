@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: pinapp-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_USER: postgres
+      POSTGRES_DB: pinApp
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d pinApp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: pinapp-rabbitmq
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+  rabbitmqdata:

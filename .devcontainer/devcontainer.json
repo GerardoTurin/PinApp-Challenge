@@ -1,0 +1,12 @@
+{
+  "name": "Java 21 + Maven (manual) + Docker",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/install-maven.sh && java -version && mvn -v && docker --version"
+}
