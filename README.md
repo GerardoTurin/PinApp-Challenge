@@ -43,13 +43,6 @@ Docker
 Cuenta SMTP (ej. Mailtrap) para notificaciones de email en eventos de cliente creado
 
 
-## Configuración
-
-Perfiles disponibles:
-
-local (por defecto) — usa 1 datasource local y habilita Swagger.
-
-prod — (si lo necesitas) endurece seguridad, etc.
 
 ## Contenedores Docker
 
