@@ -144,7 +144,11 @@ Access logs de Tomcat habilitados.
 
 UI: http://localhost:8080/icube04/doc/swagger-ui/index.html
 
+UI DEPLOY: http://54.221.10.9:8080/icube04/doc/swagger-ui/index.html
+
 OpenAPI JSON: http://localhost:8080/icube04/v3/api-docs
+
+OpenAPI JSON Deploy: http://54.221.10.9:8080/icube04/v3/api-docs
 
 
 ## Pruebas
@@ -161,10 +165,17 @@ Ejecutar: mvn -Dtest=ArchitectureLayerTest test
 
 RabbitMQ UI: http://localhost:15672
 
-Swagger: http://localhost:8080/icube04/doc/swagger-ui/index.html
-
 Actuator Health: http://localhost:8080/icube04/actuator/health
+
+Actuator Health Deploy: http://localhost:8080/icube04/actuator/health
 
 Actuator Metrics: http://localhost:8080/icube04/actuator/metrics
 
+Actuator Metrics Deploy: http://54.221.10.9:8080/icube04/actuator/metrics
+
 Prometheus (scrape): http://localhost:8080/icube04/actuator/prometheus
+
+Prometheus (scrape) Deploy: http://54.221.10.9:8080/icube04/actuator/prometheus
+
+## Deploy
+### AWS URL: http://54.221.10.9:8080/icube04
