@@ -17,6 +17,8 @@ Backend Java Spring Boot para PinApp. Implementa una arquitectura hexagonal y ut
 8. [Rutas](#rutas)
 9. [Deploy](#deploy)
 10. [Conectar a la Base de Datos](#conectar-a-la-base-de-datos)
+11. [Login](#login)
+12. [Crear Cliente](#crear-cliente)
 
 ---
 
@@ -212,6 +214,67 @@ User: postgres
 Password: 123456
 
 Database: pinApp
+<hr></hr>
+
+
+<hr></hr>
+
+### 11. Login
+
+- **Login de Usuario:**  
+  `POST /icube04/auth/login`  
+  Autenticación de usuario con JWT.
+
+    - **Usuarios:**
+        - **somasAdmin**
+            - **Rol:** SOMAS_SUPER_ADMIN
+            - **Credenciales:**
+              ```json
+              {
+                "username": "somasAdmin",
+                "password": "Sec-Adm-So"
+              }
+              ```
+
+        - **trackAdmin**
+            - **Rol:** SOMAS_USER
+            - **Credenciales:**
+              ```json
+              {
+                "username": "trackAdmin",
+                "password": "Sec-Adm-So"
+              }
+              ```
+
+<hr></hr>
+
+
+<hr></hr>
+### 12. Crear Cliente
+
+- **Endpoint:**
+  `POST /icube04/clients`
+
+- **Headers:**
+    - `Authorization`: `Bearer <token>` (reemplaza `<token>` con el JWT del usuario logueado).
+    - `x-company-id`: `1` o `2` (según corresponda).
+
+- **Body de la Request:**
+  ```json
+  {
+    "firstName": "YOUR_FIRST_NAME",
+    "lastName": "YOUR_LAST_NAME",
+    "age": 30,
+    "dateOfBirth": "2024-08-15",
+    "userId": (1 o 2)
+  }
+  
+- Descripción: Este endpoint permite crear un cliente asociado al usuario logueado y compania. El token JWT debe ser incluido en el header Authorization y el ID de la compañía ( 1 o 2 ) debe ser especificado en el header x-company-id.
+
+
+
+- Restricción de Roles: Solo los usuarios con el rol SOMAS_SUPER_ADMIN pueden crear clientes. Si un usuario con un rol distinto intenta realizar esta acción, se generará una excepción.
+
 <hr></hr>
 
 
