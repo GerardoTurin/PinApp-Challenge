@@ -173,11 +173,19 @@ mvn -Dtest=ArchitectureLayerTest test
 
 RabbitMQ UI: http://localhost:15672
 
+RabbitMQ UI Prod: http://54.221.10.9:15672
+
 Actuator Health: http://localhost:8080/icube04/actuator/health
+
+Actuator Health Prod: http://54.221.10.9:8080/icube04/actuator/health
 
 Actuator Metrics: http://localhost:8080/icube04/actuator/metrics
 
+Actuator Metrics Prod: http://54.221.10.9:8080/icube04/actuator/metrics
+
 Prometheus (scrape): http://localhost:8080/icube04/actuator/prometheus
+
+Prometheus (scrape) Prod: http://54.221.10.9:8080/icube04/actuator/prometheus
 
 <hr></hr>
 
