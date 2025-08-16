@@ -77,13 +77,16 @@ mvn spring-boot:run
 
 ### Mensajería (RabbitMQ + Spring AMQP)
 
+UI de RabbitMQ: http://localhost:15672 (username:guest/password:guest)
+
+UI de RabbitMQ Prod: http://54.221.10.9:15672 (username:guest/password:guest)
+
 El servicio publica un evento de “cliente creado”.
 
 Un listener (ClientCreatedEmailListener) consume desde la cola y envía una notificación por email.
 
 Cola de ejemplo: client.created.queue (ver RabbitMQConfig).
 
-UI de RabbitMQ: http://localhost:15672 (username:guest/password:guest)
 
 
 
@@ -169,7 +172,7 @@ RabbitMQ UI: http://localhost:15672
 
 Actuator Health: http://localhost:8080/icube04/actuator/health
 
-Actuator Health Deploy: http://localhost:8080/icube04/actuator/health
+Actuator Health Deploy: http://54.221.10.9:8080/icube04/actuator/health
 
 Actuator Metrics: http://localhost:8080/icube04/actuator/metrics
 
