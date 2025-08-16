@@ -1,192 +1,199 @@
 # icube04-backend
-Backend Java Spring Boot para PinApp.
-Incluye arquitectura hexagonal, mensajería con RabbitMQ, JPA (PostgreSQL), migraciones con Flyway, documentación Swagger, logging con Logback y Actuator + Micrometer/Prometheus para métricas.
 
-Context-path de la app: /icube04
+Backend Java Spring Boot para PinApp. Implementa una arquitectura hexagonal y utiliza tecnologías como RabbitMQ, JPA (PostgreSQL), Flyway, Swagger, Logback y Actuator con Micrometer/Prometheus para métricas.
 
+**Context-path de la app:** `/icube04`
+
+---
+
+## Tabla de Contenidos
+1. [Arquitectura y Patrones](#arquitectura-y-patrones)
+2. [Requisitos](#requisitos)
+3. [Pasos para Correr el Proyecto](#pasos-para-correr-el-proyecto)
+4. [Mensajería (RabbitMQ)](#mensajería-rabbitmq)
+5. [Logs y Métricas](#logs-y-métricas)
+6. [Swagger](#swagger)
+7. [Pruebas](#pruebas)
+8. [Rutas](#rutas)
+9. [Deploy](#deploy)
+10. [Conectar a la Base de Datos](#conectar-a-la-base-de-datos)
+
+---
 
 ## Arquitectura y Patrones
+
 ### Patrón de Arquitectura
+**Hexagonal (Ports & Adapters):**
+- `modules.<mod>.domain`: Dominio (entidades, lógica, ports).
+- `modules.<mod>.application`: Casos de uso (use cases); orquesta dominio.
+- `infrastructure.adapters.<mod>`: Adapters (entrada/salida: controllers REST, repositorios JPA, mensajería, etc.).
+- `infrastructure.configuration`: Configuración transversal (seguridad, email, messaging, swagger, etc.).
 
-Hexagonal (Ports & Adapters):
+### Patrones de Diseño
+- **Repository:** Puertos + adapters JPA.
+- **DTO / Mapper:** Adaptación entre dominio e IO.
+- **Factory/Builder:** Creación de respuestas/DTO.
+- **Strategy:** Seguridad/filters, configuración.
+- **Observer/Event-Driven:** RabbitMQ para eventos de dominio.
+- **Layered + Hexagonal blend:** Reglas ArchUnit para fronteras.
 
-modules.<mod>.domain → Dominio (entidades, lógica, ports).
-
-modules.<mod>.application → Casos de uso (use cases); orquesta dominio.
-
-infrastructure.adapters.<mod> → Adapters (entrata/salida: controllers REST, repositorios JPA, mensajería, etc.).
-
-infrastructure.configuration → configuración transversal (seguridad, email, messaging, swagger, etc.).
-
-### Patrones de diseño
-Repository (puertos + adapters JPA).
-
-DTO / Mapper (adaptación entre dominio e IO).
-
-Factory/Builder (creación de respuestas/DTO).
-
-Strategy (seguridad/filters, configuración).
-
-Observer/Event-Driven (RabbitMQ para eventos de dominio).
-
-Layered + Hexagonal blend (reglas ArchUnit para fronteras).
-
+---
 
 ## Requisitos
+- **Java:** 21
+- **Maven:** 3.9+
+- **Docker**
+- **Cuenta SMTP:** (Mailtrap) para notificaciones de email en eventos de cliente creado.
 
-Java 21
+> **Nota:** En `application-local.properties`, reemplazar las variables de Mailtrap con las propias.
 
-Maven 3.9+
+---
 
-Docker
+## Pasos para Correr el Proyecto
 
-Cuenta SMTP (Mailtrap) para notificaciones de email en eventos de cliente creado.
-
-En application-local.properties cambiar las variables de Mailtrap por las propias.
-
-
-
-## Pasos para Correr el proyecto
-
-Clonar repositorio:
-
+### 1. Clonar el Repositorio
+```bash
 git clone https://github.com/GerardoTurin/PinApp-Challenge
+cd PinApp-Challenge/icube04-backend
+```
 
 
-## Crea Contenedores Docker
+### 2. Crear Contenedores Docker
+```bash
+cd db
+docker-compose up -d
+```
 
-Posicionarse en dentro de la carpeta "db" que está en la raiz del proyecto.
-
-Ejecutar : docker-compose up -d
-
-
-
-
-## Correr proyecto
-
-En la raiz del proyecto:
-
-Ejecutar: mvn spring-boot:run
-
-### Opcional: Limpiar y Correr:
-
-mvn clean install
-
+### 3. Correr el Proyecto
+```bash
+cd ..
 mvn spring-boot:run
 
+#### Opcional: Limpiar y correr:
+mvn clean install
+mvn spring-boot:run
+```
 
-### Mensajería (RabbitMQ + Spring AMQP)
+<hr></hr>
 
-UI de RabbitMQ: http://localhost:15672 (username:guest/password:guest)
+### 4. Mensajeria (RabbitMQ)
+UI Local: http://localhost:15672 (username: guest, password: guest)
 
-UI de RabbitMQ Prod: http://54.221.10.9:15672 (username:guest/password:guest)
+UI Producción: http://54.221.10.9:15672 (username: guest, password: guest)
 
-El servicio publica un evento de “cliente creado”.
+Eventos:  
 
-Un listener (ClientCreatedEmailListener) consume desde la cola y envía una notificación por email.
+Publica un evento de cliente creado.
 
-Cola de ejemplo: client.created.queue (ver RabbitMQConfig).
+Listener: 
+
+ClientCreatedEmailListener consume desde la cola y envía una notificación por email.
+
+Cola de ejemplo: 
+
+client.created.queue (ver configuración en RabbitMQConfig).  
+<hr></hr>
 
 
+<hr></hr>
 
+### 5. Logs y Métricas
 
-### Logs y Métricas
-
-### Actuator
+Actuator
 
 Health: GET /icube04/actuator/health
 
 Métricas: GET /icube04/actuator/metrics
 
-Export Prometheus: GET /icube04/actuator/prometheus
+Prometheus Export: GET /icube04/actuator/prometheus
+
+Métricas Personalizadas
+
+Listener Instrumentado con Micrometer:  
+
+Contador de procesados: pinapp.messaging.client_created.email.processed Prometheus: pinapp_messaging_client_created_email_processed_total Tags: queue, outcome (success|error)  
+
+Timer de envío de email: pinapp.messaging.client_created.email.seconds Prometheus (histograma): pinapp_messaging_client_created_email_seconds_bucket|count|sum|max Tags: queue, outcome  
+
+Validación:  
+
+Crear un cliente (endpoint correspondiente).
 
 
-### Métricas personalizadas del listener
-
-Se instrumentó el listener con Micrometer:
-
-Contador de procesados:
-
-pinapp.messaging.client_created.email.processed
-
-Prometheus: pinapp_messaging_client_created_email_processed_total
-
-Tags: queue, outcome (success|error)
-
-Timer de envío de email:
-
-pinapp.messaging.client_created.email.seconds
-
-Prometheus (histograma):
-pinapp_messaging_client_created_email_seconds_bucket|count|sum|max
-
-Tags: queue, outcome
-
-
-#### Cómo validar:
-
-##### Línea base:
+Verificar que el contador incrementa en:
 
 /icube04/actuator/metrics/pinapp.messaging.client_created.email.processed
+
 /icube04/actuator/metrics/pinapp.messaging.client_created.email.seconds
 
+Revisar las series en /actuator/prometheus.
 
-Crea un cliente (endpoint correspondiente).
+Logs:
 
-Repite las URL y verifica que count incrementa.
-
-En /actuator/prometheus busca las series anteriores.
-
-#### Logs:
-
-Se configura en logback-spring.xml para consola + archivo (/logs/app-YYYY-MM-DD.log).
+Configuración en logback-spring.xml (consola + archivo: /logs/app-YYYY-MM-DD.log).
 
 Access logs de Tomcat habilitados.
 
+<hr></hr>
+
+<hr></hr>
 
 
-## Swagger
+### 6. Swagger
 
-UI: http://localhost:8080/icube04/doc/swagger-ui/index.html
+UI Local: http://localhost:8080/icube04/doc/swagger-ui/index.html
 
-UI DEPLOY: http://54.221.10.9:8080/icube04/doc/swagger-ui/index.html
+UI Producción: http://54.221.10.9:8080/icube04/doc/swagger-ui/index.html
 
-OpenAPI JSON: http://localhost:8080/icube04/v3/api-docs
+OpenAPI JSON Local: http://localhost:8080/icube04/v3/api-docs
 
-OpenAPI JSON Deploy: http://54.221.10.9:8080/icube04/v3/api-docs
+OpenAPI JSON Producción: http://54.221.10.9:8080/icube04/v3/api-docs
 
-
-## Pruebas
-### Unitarias / Integración
-
-Ejecutar: mvn test
-
-### Tests de arquitectura (ArchUnit)
-
-Ejecutar: mvn -Dtest=ArchitectureLayerTest test
+<hr></hr>
 
 
-## Rutas
+<hr></hr>
+
+### 7. Pruebas
+
+Unitarias / Integración
+```bash
+mvn test
+```
+
+Tests de Arquitectura (ArchUnit)
+```bash
+mvn -Dtest=ArchitectureLayerTest test
+```
+<hr></hr>
+
+<hr></hr>
+
+### 8. Rutas
 
 RabbitMQ UI: http://localhost:15672
 
 Actuator Health: http://localhost:8080/icube04/actuator/health
 
-Actuator Health Deploy: http://54.221.10.9:8080/icube04/actuator/health
-
 Actuator Metrics: http://localhost:8080/icube04/actuator/metrics
-
-Actuator Metrics Deploy: http://54.221.10.9:8080/icube04/actuator/metrics
 
 Prometheus (scrape): http://localhost:8080/icube04/actuator/prometheus
 
-Prometheus (scrape) Deploy: http://54.221.10.9:8080/icube04/actuator/prometheus
+<hr></hr>
 
-## Deploy
-### AWS URL Base: http://54.221.10.9:8080/icube04
+<hr></hr>
 
+### 9. Deploy
 
-## Conectar DB Prod
+AWS URL Base
+
+http://54.221.10.9:8080/icube04
+
+<hr></hr>
+
+<hr></hr>
+
+ ### 10. Conectar a la Base de Datos
 
 Host: 54.221.10.9
 
@@ -197,3 +204,6 @@ User: postgres
 Password: 123456
 
 Database: pinApp
+<hr></hr>
+
+
